@@ -27,7 +27,7 @@ public partial class MainPage : ContentPage
 	private static readonly HttpClient httpClient = new HttpClient();
 	const string SearchNearbyApi = "https://places.googleapis.com/v1/places:searchNearby";
 	const string PlaceDetailApi = "https://places.googleapis.com/v1/places/";
-	const string API_KEY = "AIzaSyBIjBhSDzclvThrYUw42FhuVGs3R7dt5Y8";
+	const string API_KEY = "INSERT-YOUR-KEY-HERE";
 
 	public MainPage()
 	{
