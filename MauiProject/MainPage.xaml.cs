@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace MauiProject;
 
@@ -12,6 +12,10 @@ namespace MauiProject;
 [JsonSerializable(typeof(PlacesBodyRequest))]
 [JsonSerializable(typeof(Circle))]
 [JsonSerializable(typeof(LocationRestriction))]
+[JsonSerializable(typeof(PlaceDetail))]
+[JsonSerializable(typeof(SearchNearbyResponse))]
+[JsonSerializable(typeof(DisplayName))]
+[JsonSerializable(typeof(Place))]
 [JsonSerializable(typeof(int))]
 [JsonSerializable(typeof(double))]
 internal partial class SourceGenerationContext : JsonSerializerContext
@@ -27,7 +31,7 @@ public partial class MainPage : ContentPage
 	private static readonly HttpClient httpClient = new HttpClient();
 	const string SearchNearbyApi = "https://places.googleapis.com/v1/places:searchNearby";
 	const string PlaceDetailApi = "https://places.googleapis.com/v1/places/";
-	const string API_KEY = "INSERT-YOUR-KEY-HERE";
+	const string API_KEY = "INSERT-YOUR-KEY";
 
 	public MainPage()
 	{
@@ -94,7 +98,7 @@ public partial class MainPage : ContentPage
 				//GETTING PLACES AROUND THE DEVICE
 				SearchNearbyResponse? searchNearbyResponse = null;
 
-				var content = new StringContent(JsonConvert.SerializeObject(placesBodyRequest), Encoding.UTF8, "application/json");
+				var content = new StringContent(JsonSerializer.Serialize(placesBodyRequest,SourceGenerationContext.Default.PlacesBodyRequest), Encoding.UTF8, "application/json");
 				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
 				HttpResponseMessage response = await httpClient.PostAsync(SearchNearbyApi, content);
@@ -103,7 +107,7 @@ public partial class MainPage : ContentPage
 				{
 
 					string searchNearbyString = await response.Content.ReadAsStringAsync();
-					searchNearbyResponse = JsonConvert.DeserializeObject<SearchNearbyResponse>(searchNearbyString);
+					searchNearbyResponse = JsonSerializer.Deserialize<SearchNearbyResponse>(searchNearbyString,SourceGenerationContext.Default.SearchNearbyResponse);
 
 				}
 
@@ -208,27 +212,27 @@ public partial class MainPage : ContentPage
 	}
 	async Task SetNearbyPointsOfInterest(SearchNearbyResponse? searchNearbyResponse, HttpResponseMessage response, List<PlaceDetail?> placeInfos)
 	{
-		if (searchNearbyResponse != null && searchNearbyResponse.Places.Count > 0)
+		if (searchNearbyResponse != null && searchNearbyResponse.places.Count > 0)
 		{
-			foreach (Place place in searchNearbyResponse.Places)
+			foreach (Place place in searchNearbyResponse.places)
 			{
 
-				response = await httpClient.GetAsync(PlaceDetailApi + place.Id);
+				response = await httpClient.GetAsync(PlaceDetailApi + place.id);
 				PlaceDetail? placeDetailResponse = null;
 				if (response.Content != null)
 				{
 
 					string searchNearbyString = await response.Content.ReadAsStringAsync();
-					placeDetailResponse = JsonConvert.DeserializeObject<PlaceDetail>(searchNearbyString);
+					placeDetailResponse = JsonSerializer.Deserialize<PlaceDetail>(searchNearbyString,SourceGenerationContext.Default.PlaceDetail);
 					if (placeDetailResponse != null)
 					{
 						placeInfos.Add(placeDetailResponse);
 						app?.Dispatcher.Dispatch(() =>
 						AddPin(new Location()
 						{
-							Longitude = placeDetailResponse.Location.longitude,
-							Latitude = placeDetailResponse.Location.latitude
-						}, place.DisplayName.Text)
+							Longitude = placeDetailResponse.location.longitude,
+							Latitude = placeDetailResponse.location.latitude
+						}, place.displayName.text)
 						);
 					}
 
