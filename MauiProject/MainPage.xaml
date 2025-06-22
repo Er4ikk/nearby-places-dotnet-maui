@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
+               
+              xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
+             x:Class="MauiProject.MainPage">
+
+<Grid> 
+
+      
+
+    
+     <!-- <ScrollView> -->
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="5"
+            VerticalOptions="Start"
+           
+            
+            >
+
+         <SearchBar 
+            Placeholder="Cosa stai cercando?"
+            x:Name="searchBar"
+            TextChanged="OnTextChanged" />
+<ListView x:Name="searchResults"
+        ItemSelected="OnItemSelected"
+        HeightRequest="100"
+        
+
+     >
+  
+
+     </ListView>
+
+
+          
+           
+
+     
+        </VerticalStackLayout>
+
+       
+
+
+
+    <!-- </ScrollView> -->
+    <StackLayout
+        VerticalOptions="End"
+        Padding="30,0"
+        Spacing="25"
+        
+        >
+           
+            <maps:Map 
+                x:Name="Map"
+                MapType="Hybrid"
+                HeightRequest="450"
+            />
+     
+
+    </StackLayout>
+ 
+  
+            
+
+    
+</Grid>
+
+
+   
+
+</ContentPage>
